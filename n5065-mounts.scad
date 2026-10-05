@@ -21,7 +21,7 @@ module n5065_front_screws(thickness=6) {
 }
 
 module n5065_front_bricks(thickness=6) {
-    num_pins = 8;
+    num_pins = 6;
     pin_offset = 15;
     pin_diameter = 4.9;
 
