@@ -1,5 +1,6 @@
 // ============================================================
 // 1_motor_mount.scad - N5065 馬達安裝座 (含方管夾、導軌座、編碼器凸台)
+// 編碼器凸台：內邊緣距離 28.77mm，中心距 34.77mm，打斜卡入
 // ============================================================
 include <BOSL2/std.scad>
 include <BOSL2/screws.scad>
@@ -22,6 +23,11 @@ mount_couple_screw_diameter= 3;
 mount_gap                  = 2.4;
 mount_wall_thickness       = mount_couple_screw_diameter * 2;   // 6mm
 mount_length               = n5065_motor_length();
+
+// ★ 編碼器凸台尺寸 ★
+boss_w           = 6;          // 凸台寬度 (與 cuboid(6,...) 一致)
+target_inner_gap = 28.77;      // 兩個凸台內邊緣之間嘅距離
+boss_center_dist = target_inner_gap + boss_w;   // 中心距 = 34.77mm
 
 // ---- 主體 ----
 module motor_mount() {
@@ -79,12 +85,13 @@ module motor_mount() {
             }
 
         // 前安裝板 + 編碼器 (AMT103) 凸台
+        // ★ 兩個凸台內邊緣距離 = 28.77mm，中心距 = 34.77mm，並以 zrot(25) 打斜卡入 ★
         align(BOT, FWD) cuboid([n5065_motor_diameter(), 6, 4]) {
             yflip() attach(BOT, RIGHT) n5065_front_mount(circle=false) {
                 attach(TOP, BOT)
                     zrot(25)
-                        arc_copies(d = amt103_bolt_circle + 6, n = 2, sa = 0, ea = 360)
-                            cuboid(6, rounding=1, edges="Z") {
+                        arc_copies(d = boss_center_dist, n = 2, sa = 0, ea = 360)
+                            cuboid(boss_w, rounding=1, edges="Z") {
                                 tag("remove")
                                     attach(TOP, TOP, inside=true)
                                         screw_hole("M3", l=12) {
